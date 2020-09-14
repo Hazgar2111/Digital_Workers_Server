@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="MySQL - digital_workers@127.0.0.1" uuid="c01ae186-d880-44bc-8c39-82a354cc541a">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <schema-control>MANUAL</schema-control>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://127.0.0.1:3306/digital_workers?useUnicode=true&amp;serverTimezone=UTC</jdbc-url>
+      <time-zone>UTC</time-zone>
+    </data-source>
+  </component>
+</project>
