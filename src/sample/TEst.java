@@ -3,6 +3,7 @@ package sample;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class TEst {
@@ -19,7 +20,10 @@ public class TEst {
        List<File> lst = Arrays.asList(arrFiles);
         return new ArrayList<>(lst);
     }
-    public static void main(String[] args) {
-        getFiles("СташинФёдор");
+    public static void main(String[] args)
+    {
+        java.util.Date utilDate = new java.util.Date();
+        java.sql.Timestamp sqlTS = new java.sql.Timestamp(utilDate.getTime());
+        System.out.println(sqlTS);
     }
 }

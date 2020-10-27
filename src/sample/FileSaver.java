@@ -16,6 +16,10 @@ public class FileSaver implements Serializable {
     private String path;
 
 
+    public FileSaver() {
+    }
+
+
     public FileSaver(String type, String name, String path) {
         this.type = type;
         this.name = name;
@@ -23,27 +27,41 @@ public class FileSaver implements Serializable {
     }
 
 
-    public FileSaver(String type, String name, byte[] fileBytes) {
+    public FileSaver(String type, String name, String path, int id) {
         this.type = type;
         this.name = name;
-        this.fileBytes = fileBytes;
+        this.path = path;
+        this.id = id;
 
     }
 
 
-    public FileSaver(String type, String oldType,String name, String oldName, byte[] fileBytes, int edit) {
+    public FileSaver(String type, String name, byte[] fileBytes, int id) {
+        this.type = type;
+        this.name = name;
+        this.fileBytes = fileBytes;
+        this.id = id;
+    }
+
+
+    public FileSaver(String type, String oldType,String name, String oldName, byte[] fileBytes, int id) {
         this.type = type;
         this.oldType= oldType;
         this.name = name;
         this.oldName = oldName;
         this.fileBytes = fileBytes;
-        this.edit = edit;
+        this.id = id;
     }
+
 
     public FileSaver(String type, File file) {
         this.type = type;
         this.file = file;
     }
+
+
+
+
 
     public String getPath() {
         return path;
@@ -103,5 +121,17 @@ public class FileSaver implements Serializable {
 
     public void setOldName(String oldName) {
         this.oldName = oldName;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

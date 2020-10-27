@@ -1,11 +1,8 @@
 package sample;
 
-import org.w3c.dom.ls.LSOutput;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class ServerRunnable extends Thread implements Serializable {
@@ -40,14 +37,44 @@ public class ServerRunnable extends Thread implements Serializable {
                         outStream.writeObject(data);
                     }
                     case "SAVE_FILE" -> {
-                        FileSaver file = r.getFileSaver1();
-                        String name = r.getName();
-                        Request.SaveFile(name, file);
+                        Request.SaveFile(r.getEmployees(), r.getFileSaver1());
+                    }
+                    case "EDIT_FILE" -> {
+                        Request.editFile(r.getFileSaver1());
                     }
                     case "DELETE_FILE" -> {
-
+                        Request.deleteFile(r.getId(), r.getEmployee_id_kto(), 2147483647, r.getDate());
                     }
-                    case "UPDATE_EMPLOYEE" -> Request.updateeEmployee(r.getEmployees().get(0));
+                    case "DELETE_HUMAN_TO_FILE" -> {
+                        Request.deleteHumanTofile(r.getId(), r.getEmployee_id_kto(), r.getEmployee_id_komu(), r.getDate());
+                    }
+                    case "LIST_BACKUP" -> {
+                        ArrayList<BackUpFile> backUpFiles = Request.returnBackup();
+                        Request data = new Request("LIST_BACKUP", backUpFiles, 1);
+                        outStream.writeObject(data);
+                    }
+                    case "DELETE_BACKUP" -> {
+                        Request.deleteBackUpOneHuman(r.getId(), r.getFile_id(), r.getEmployee_id_komu());
+                    }
+                    case "DELETE_BACKUP_MANY" -> {
+                        Request.deleteBackUpManyHuman(r.getId(), r.getFile_id());
+                    }
+                    case "LIST_HUMAN_BACKUP" -> {
+                        ArrayList<File_to_human> backUpFiles = Request.getFilesToHumanBackup(r.getId());
+                        Request data = new Request("LIST_BACKUP", backUpFiles, true);
+                        outStream.writeObject(data);
+                    }
+                    case "ONE_FILE" -> {
+                        FileSaver fileSaver = Request.getOneFile(r.getId());
+                        Request data = new Request("ONE_FILE", fileSaver);
+                        outStream.writeObject(data);
+                    }
+                    case "ONE_EMPLOYEE" -> {
+                        Employee employee = Request.getOneEmployee(r.getId());
+                        Request data = new Request("ONE_EMPLOYEE", employee);
+                        outStream.writeObject(data);
+                    }
+                    case "UPDATE_EMPLOYEE" -> Request.updateEmployee(r.getEmployees().get(0));
 
                 }
             }

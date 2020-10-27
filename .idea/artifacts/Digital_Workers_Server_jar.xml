@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/Digital_Workers_Server_jar</output-path>
     <root id="archive" name="Digital_Workers_Server.jar">
       <element id="module-output" name="Digital_Workers_Server" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../JAR &amp; JDK FILES/SQL conector driver jdk/mysql-connector-java-8.0.15.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../JAR &amp; JDK FILES/javafx-sdk-14.0.2.1/lib/src.zip" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../JAR &amp; JDK FILES/javafx-sdk-14.0.2.1/lib/javafx-swt.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../JAR &amp; JDK FILES/javafx-sdk-14.0.2.1/lib/javafx.web.jar" path-in-jar="/" />
@@ -12,7 +13,6 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/../JAR &amp; JDK FILES/javafx-sdk-14.0.2.1/lib/javafx.swing.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../JAR &amp; JDK FILES/javafx-sdk-14.0.2.1/lib/javafx.controls.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/../JAR &amp; JDK FILES/javafx-sdk-14.0.2.1/lib/javafx.graphics.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../JAR &amp; JDK FILES/SQL conector driver jdk/mysql-connector-java-8.0.15.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
