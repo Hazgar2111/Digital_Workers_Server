@@ -8,6 +8,7 @@ public class File_to_human implements Serializable {
     private int id_employee;
     private int id_file;
     private boolean edirOrno;
+    private boolean delOrNo;
 
     public int getId1() {
         return id1;
@@ -22,7 +23,7 @@ public class File_to_human implements Serializable {
     }
 
 
-    public File_to_human(int id1, int id_employee, int id_file, boolean edirOrno) {
+    public File_to_human(int id1, int id_employee, int id_file, boolean edirOrno, boolean delOrNo) {
         this.id1 = id1;
         this.id_employee = id_employee;
         this.id_file = id_file;

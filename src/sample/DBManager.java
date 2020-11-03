@@ -67,7 +67,8 @@ public class DBManager {
                 int id_employee = resultSet.getInt("id_employee");
                 int id_file = resultSet.getInt("id_file");
                 boolean editOrno1 = resultSet.getBoolean("editOrno");
-                file_to_humen.add(new File_to_human(id1, id_employee, id_file, editOrno1));
+                boolean delOrno1 = resultSet.getBoolean("delOrno");
+                file_to_humen.add(new File_to_human(id1, id_employee, id_file, editOrno1, delOrno1));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,7 +83,8 @@ public class DBManager {
                     String name1 = resultSet.getString("name1");
                     String path1 = resultSet.getString("path1");
                     String type1 = resultSet.getString("type1");
-                    fileSavers.add(new FileSaver(type1, name1, Files.readAllBytes(Path.of(path1)), id1));
+                    java.sql.Timestamp dateTime = resultSet.getTimestamp("dateTime");
+                    fileSavers.add(new FileSaver(type1, name1, Files.readAllBytes(Path.of(path1)), id1, dateTime));
                 }
             }
 
@@ -121,6 +123,8 @@ public class DBManager {
 
     public void writeFileToDb(ArrayList<Employee> employees, FileSaver fileSaver) {
         try {
+            java.util.Date utilDate = new java.util.Date();
+            java.sql.Timestamp date = new java.sql.Timestamp(utilDate.getTime());
             String name = fileSaver.getName();
             PreparedStatement statement = connection.prepareStatement("SELECT id FROM files WHERE name1= ?");
             statement.setString(1, name);
@@ -131,10 +135,13 @@ public class DBManager {
             }
             if (id == 2147483647) {
                 statement = connection.prepareStatement(
-                        "INSERT INTO files (id, name1, path1, type1) VALUES (null, ?, ?, ?)");
+
+                        "INSERT INTO files (id, name1, path1, type1, dateTime, description) VALUES (null, ?, ?, ?, ?, ?)");
                 statement.setString(1, fileSaver.getName());
                 statement.setString(2, fileSaver.getPath());
                 statement.setString(3, fileSaver.getType());
+                statement.setTimestamp(4, date);
+                statement.setString(5, fileSaver.getDesc());
                 int rows = statement.executeUpdate();
                 statement.close();
             }
@@ -149,7 +156,7 @@ public class DBManager {
             }
             statement.close();
 
-            for (Employee employee: employees) {
+            for (Employee employee : employees) {
                 statement = connection.prepareStatement(
                         "INSERT INTO file_to_human (id, id_employee, id_file, editOrNo) VALUES (null, ?, ?, ?)");
                 statement.setInt(1, employee.getId());
@@ -187,16 +194,14 @@ public class DBManager {
 
     public void saveBackUp(int file_id, int employee_id_Kto, int komu_sdelali_employeeId, String action, java.sql.Timestamp sqlTS) throws SQLException {
         PreparedStatement statement;
-        if (komu_sdelali_employeeId == 2147483647)
-        {
+        if (komu_sdelali_employeeId == 2147483647) {
             statement = connection.prepareStatement(
                     "INSERT INTO backup (id, files_id, action1, kto_sdelal_employeeId, komu_sdelali_employeeId, dateTime ) VALUES (null, ?, ?, ?, null, ?)");
             statement.setInt(1, file_id);
             statement.setString(2, action);
             statement.setInt(3, employee_id_Kto);
             statement.setTimestamp(4, sqlTS);
-        }
-        else {
+        } else {
             statement = connection.prepareStatement(
                     "INSERT INTO backup (id, files_id, action1, kto_sdelal_employeeId, komu_sdelali_employeeId, dateTime ) VALUES (null, ?, ?, ?, ?, ?)");
             statement.setInt(1, file_id);
@@ -222,7 +227,7 @@ public class DBManager {
                 String action1 = resultSet.getString("action1");
                 int kto_sdelal_employeeId = resultSet.getInt("kto_sdelal_employeeId");
                 int komu_sdelali_employeeId = resultSet.getInt("komu_sdelali_employeeId");
-                java.sql.Timestamp 	dateTime = resultSet.getTimestamp("dateTime");
+                java.sql.Timestamp dateTime = resultSet.getTimestamp("dateTime");
                 backUpFiles.add(new BackUpFile(id, files_id, action1, kto_sdelal_employeeId, komu_sdelali_employeeId, dateTime));
             }
         } catch (Exception e) {
@@ -276,7 +281,7 @@ public class DBManager {
     }
 
 
-    public void setManyFileToHuman(int file_id,  boolean ediOrno) {
+    public void setManyFileToHuman(int file_id, boolean ediOrno) {
         try {
             PreparedStatement statement = connection.prepareStatement("" +
                     "UPDATE file_to_human SET editOrNo=? WHERE id_file = ?"
@@ -289,8 +294,6 @@ public class DBManager {
             e.printStackTrace();
         }
     }
-
-
 
 
     public Employee getOneEmployee(int id) {
@@ -332,13 +335,14 @@ public class DBManager {
             fileSaver.setName(resultSet.getString("name1"));
             fileSaver.setType(resultSet.getString("type1"));
             fileSaver.setPath(resultSet.getString("path1"));
+            fileSaver.setDateTime(resultSet.getTimestamp("dateTime"));
         }
 
         return fileSaver;
     }
 
 
-    public ArrayList<File_to_human> getFilesToHumanBackup(int file_id) throws SQLException {
+    public ArrayList<File_to_human> getFilesToHumanBackup(int file_id) {
         ArrayList<File_to_human> file_to_humen = new ArrayList<>();
 
         PreparedStatement statement = null;
@@ -351,8 +355,9 @@ public class DBManager {
                 int id1 = resultSet.getInt("id");
                 int id_employee = resultSet.getInt("id_employee");
                 int id_file = resultSet.getInt("id_file");
-                boolean editOrno1 = resultSet.getBoolean("editOrno");
-                file_to_humen.add(new File_to_human(id1, id_employee, id_file, editOrno1));
+                boolean editOrno1 = resultSet.getBoolean("editOrNo");
+                boolean delOrno = resultSet.getBoolean("delOrNo");
+                file_to_humen.add(new File_to_human(id1, id_employee, id_file, editOrno1, delOrno));
 
             }
         } catch (Exception e) {
@@ -361,4 +366,32 @@ public class DBManager {
         return file_to_humen;
     }
 
+
+    public ArrayList<FileSaver> getFilesCheckType(String type) throws SQLException {
+        ArrayList<FileSaver> fileSavers = new ArrayList<>();
+
+        PreparedStatement statement = null;
+
+        try {
+            statement = connection.prepareStatement("SELECT * FROM files where type1 = ?");
+            statement.setString(1, type);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int id1 = resultSet.getInt("id");
+                String name1 = resultSet.getString("name1");
+                String path1 = resultSet.getString("path1");
+                String type1 = resultSet.getString("type1");
+                java.sql.Timestamp dateTime = resultSet.getTimestamp("dateTime");
+                String description = resultSet.getString("description");
+                fileSavers.add(new FileSaver(type1, name1, Files.readAllBytes(Path.of(path1)), id1, dateTime, description));
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assert statement != null;
+        statement.close();
+        return fileSavers;
+    }
 }

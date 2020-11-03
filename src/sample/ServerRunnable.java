@@ -26,6 +26,7 @@ public class ServerRunnable extends Thread implements Serializable {
             while((r=(Request)inStream.readObject())!=null)
             {
                 switch (r.getOperationType()) {
+                    default -> outStream.writeObject("НЕ В ЭТОТ РАЗ! :)"); //отброс всех лишних пакетов
                     case "LIST_EMPLOYEES" -> {
                         ArrayList<Employee> employees = Request.returnEmployee();
                         Request data = new Request("LIST_EMPLOYEES", employees);
@@ -40,7 +41,7 @@ public class ServerRunnable extends Thread implements Serializable {
                         Request.SaveFile(r.getEmployees(), r.getFileSaver1());
                     }
                     case "EDIT_FILE" -> {
-                        Request.editFile(r.getFileSaver1());
+                        Request.editFile(r.getFileSaver1(), r.getEmployees().get(0));
                     }
                     case "DELETE_FILE" -> {
                         Request.deleteFile(r.getId(), r.getEmployee_id_kto(), 2147483647, r.getDate());
@@ -72,6 +73,11 @@ public class ServerRunnable extends Thread implements Serializable {
                     case "ONE_EMPLOYEE" -> {
                         Employee employee = Request.getOneEmployee(r.getId());
                         Request data = new Request("ONE_EMPLOYEE", employee);
+                        outStream.writeObject(data);
+                    }
+                    case "LIST_FILES_TYPE" -> {
+                        ArrayList<FileSaver> fileSaver = Request.getFilesCheckType(r.getType());
+                        Request data = new Request("LIST_FILES_TYPE", fileSaver, r.getType());
                         outStream.writeObject(data);
                     }
                     case "UPDATE_EMPLOYEE" -> Request.updateEmployee(r.getEmployees().get(0));

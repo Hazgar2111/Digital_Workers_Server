@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.nio.file.Files;
-import java.util.Date;
 
 public class Request implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -28,16 +27,8 @@ public class Request implements Serializable {
     private java.sql.Timestamp date;
     private int file_id;
     private int employee_id;
-
-
-    public static String encodeImage(byte[] imageByteArray) {
-        return Base64.getEncoder().encodeToString(imageByteArray);
-    }
-
-    public static byte[] decodeImage(String imageDataString) {
-        return Base64.getDecoder().decode(imageDataString);
-    }
-
+    private String type;
+    private ArrayList<FileSaver> fileSavers;
 
 
     public Request() {
@@ -47,18 +38,6 @@ public class Request implements Serializable {
     public Request(String operationType, AllUserData allUserData, String name) {
         this.operationType = operationType;
         this.allUserData = allUserData;
-        this.name = name;
-    }
-
-    public Request(String operationType, FileSaver fileSavers, String name, int check) {
-        this.operationType = operationType;
-        this.fileSaver1 = fileSavers;
-        this.name = name;
-    }
-
-    public Request(String operationType, ArrayList<File> files, String name) {
-        this.operationType = operationType;
-        this.files = files;
         this.name = name;
     }
 
@@ -87,19 +66,11 @@ public class Request implements Serializable {
         this.file_to_humen = file_to_humen;
     }
 
-    public Request(String operationType, int id) {
+    public Request(String operationType, ArrayList<FileSaver> fileSavers, String type) {
         this.operationType = operationType;
-        this.id = id;
+        this.fileSavers = fileSavers;
+        this.type = type;
     }
-
-    public Request(String operationType, int id, int file_id, int komu_id) {
-        this.operationType = operationType;
-        this.id = id;
-        this.file_id = file_id;
-        this.employee_id_komu = komu_id;
-    }
-
-
 
 
     public static ArrayList<Employee> returnEmployee() {
@@ -150,14 +121,13 @@ public class Request implements Serializable {
         } else {
             Files.write(Path.of(path1), fileSaver.getFileBytes());
         }
-        FileSaver temp1 = new FileSaver(fileSaver.getType(), fileSaver.getName(), path1);
+        FileSaver temp1 = new FileSaver(fileSaver.getType(), fileSaver.getName(), path1, fileSaver.getDesc());
 
         manager.writeFileToDb(employees, temp1);
-
     }
 
 
-    public static void editFile(FileSaver fileSaver) throws IOException {
+    public static void editFile(FileSaver fileSaver, Employee employee) throws IOException, SQLException {
         String filePath = new File("").getAbsolutePath();
         String path1 = filePath + "/FilesRepository/HR/" + fileSaver.getName();
         String delete = filePath + "/FilesRepository/HR/" + fileSaver.getOldName();
@@ -172,7 +142,6 @@ public class Request implements Serializable {
             FileSaver temp = new FileSaver(fileSaver.getType(), fileSaver.getName(), path1, fileSaver.getId());
             manager.updateFiles(temp);
         }
-
     }
 
 
@@ -215,114 +184,106 @@ public class Request implements Serializable {
 
     public static FileSaver getOneFile(int file_id) throws SQLException, IOException {
         FileSaver fileSaver = manager.getOneFile(file_id);
-        return new FileSaver(fileSaver.getType(), fileSaver.getName(), Files.readAllBytes(Path.of(fileSaver.getPath())), fileSaver.getId());
+        return new FileSaver(fileSaver.getType(), fileSaver.getName(), Files.readAllBytes(Path.of(fileSaver.getPath())), fileSaver.getId(), fileSaver.getDateTime());
     }
 
 
+    public static ArrayList<FileSaver> getFilesCheckType(String type) throws SQLException {
 
-
-    public static Employee getOneEmployee(int id) {
-        return manager.getOneEmployee(id);
+        return manager.getFilesCheckType(type);
     }
 
-    public java.sql.Timestamp getDate() {
-        return date;
-    }
 
     public static ArrayList<File_to_human> getFilesToHumanBackup(int file_id) throws SQLException {
         return manager.getFilesToHumanBackup(file_id);
     }
 
 
+    public static Employee getOneEmployee(int id) {
+        return manager.getOneEmployee(id);
+    }
+
+
+
+    public String getType() {
+        return type;
+    }
+
+    public java.sql.Timestamp getDate() {
+        return date;
+    }
+
     public int getFile_id() {
         return file_id;
     }
-
 
     public void setFile_id(int file_id) {
         this.file_id = file_id;
     }
 
-
     public int getEmployee_id() {
         return employee_id;
     }
-
 
     public void setEmployee_id(int employee_id) {
         this.employee_id = employee_id;
     }
 
-
     public void setEmployee_id_kto(int employee_id_kto) {
         this.employee_id_kto = employee_id_kto;
     }
-
 
     public int getEmployee_id_komu() {
         return employee_id_komu;
     }
 
-
     public void setEmployee_id_komu(int employee_id_komu) {
         this.employee_id_komu = employee_id_komu;
     }
-
 
     public String getOperationType() {
         return operationType;
     }
 
-
     public void setOperationType(String operationType) {
         this.operationType = operationType;
     }
-
 
     public ArrayList<Employee> getEmployees() {
         return employees;
     }
 
-
     public void setEmployees(ArrayList<Employee> employees) {
         this.employees = employees;
     }
-
 
     public String getName() {
         return name;
     }
 
-
     public AllUserData getAllUserData() {
         return allUserData;
     }
-
 
     public FileSaver getFileSaver1() {
         return fileSaver1;
     }
 
-
     public void setFileSaver1(FileSaver fileSaver1) {
         this.fileSaver1 = fileSaver1;
     }
-
 
     public int getId() {
         return id;
     }
 
-
     public Employee getEmployee() {
         return employee;
     }
 
-
     public void setId(int id) {
         this.id = id;
     }
-
 
     public int getEmployee_id_kto() {
         return employee_id_kto;
